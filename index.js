@@ -95,7 +95,6 @@ function processFile(bemObj, filePath, opts) {
 	if (badRules.length !== 0) {
 		console.log(colors.green(`\t... ${filePath} is fixed!`));		
 	}
-	
 	postProcessCss(css.stringify(ast))
 		.then(newCss => {
 			fs.writeFileSync(filePath, newCss)
