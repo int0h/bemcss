@@ -9,7 +9,7 @@ opts.fix = opts.f;
 const dirPath = opts.root;
 //const dirPath = './v-button';
 if (!dirPath){
-	err('no file present');
+	console.error('no file present');
 	console.info(`Usage: bemcss [-c][-f] <block folder>
 	-c - path to csscomb config
 	-f - fix issues
