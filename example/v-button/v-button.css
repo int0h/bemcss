@@ -1,0 +1,24 @@
+.v-button
+{
+    width: 1px;
+}
+
+.v-button_active_yes
+{
+    height: 2px;
+}
+
+.v-button__title
+{
+    left: 1px;
+}
+
+.v-button__title_size_m
+{
+    left: 20px;
+}
+
+.v-button__title_color_red
+{
+    color: red;
+}
