@@ -7,7 +7,7 @@ const opts = minimist(process.argv.slice(2));
 opts.root = opts._[0];
 opts.fix = opts.f;
 const dirPath = opts.root;
-//const dirPath = './v-button';
+
 if (!dirPath){
 	console.error('no file present');
 	console.info(`Usage: bemcss [-c][-f] <block folder>
