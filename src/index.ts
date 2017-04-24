@@ -105,7 +105,7 @@ async function processMods(modsDir, opts) {
 		const filePath = path.join(modsDir, fileName);
 		if (fs.statSync(filePath).isDirectory()) {
 			console.warn(`Directory ${fileName} in mod directory`);
-			return;
+			continue;
 		}
 		const bemObj = parseBem(getFileName(fileName));		
 		await processFile(bemObj, filePath, opts);
@@ -119,13 +119,13 @@ async function processElem(elemDir, parent, opts) {
 		if (fs.statSync(filePath).isDirectory()) {
 			if (/^_/.test(fileName)){
 				await processMods(filePath, opts);
-				return;
+				continue;
 			}
 			console.warn(`Directory ${fileName} in elem directory`);
-			return;
+			continue;
 		}
 		if (getFileName(fileName) !== parent.name + getFileName(elemDir)) {
-			return;
+			continue;
 		}
 		const bemObj = parseBem(getFileName(fileName));
 		await processFile(bemObj, filePath, opts);
@@ -143,15 +143,15 @@ export async function processFolder(opts) {
 	for (const item of fileList) {
 		const itemPath = path.join(opts.root, item);
 		if (fs.statSync(itemPath).isFile()) {			
-			return;
+			continue;
 		}
 		if (/^__/.test(item)){
 			await processElem(itemPath, bemObj, opts);
-			return;
+			continue;
 		}
 		if (/^_/.test(item)){
 			await processMods(itemPath, opts);
-			return;
+			continue;
 		}
 	}
 }
