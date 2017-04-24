@@ -4,10 +4,11 @@
         "node_modules/@types"
     ],
     "compilerOptions": {
+        "sourceRoot": "./src",
         "outDir": "./dist",
+        "declaration": true,
         "target": "es6",
         "inlineSourceMap": true,
-        "inlineSources": true,
         "module": "commonjs",
         "typeRoots": [
             "node_modules/types"

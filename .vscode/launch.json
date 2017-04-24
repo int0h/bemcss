@@ -8,10 +8,14 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/dist/cli.js",
+            "program": "${workspaceRoot}/src/cli.ts",
             "args": [
                 "/Volumes/Work/new_vendors/desktop.blocks/v-key-value",
                 "-f"
+            ],
+            "showAsyncStacks": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*"
             ]
         },
         {

@@ -1,6 +1,6 @@
-import css from 'css';
-import colors from 'colors/safe';
-import fs from 'fs-extra';
+import * as css from 'css';
+import * as colors from 'colors/safe';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 
 import {parseBem, stringifyBem, bemPath} from './bem-utils';
@@ -89,7 +89,9 @@ async function processFile(bemObj, filePath, opts) {
 	if (!opts.fix) {
 		return;
 	}
-	badRules.forEach(addRuleToFile.bind(null, opts.root));
+	for (const rule of badRules) {
+		await addRuleToFile(opts.root, rule);
+	}
 	if (badRules.length !== 0) {
 		console.log(colors.green(`\t... ${filePath} is fixed!`));		
 	}

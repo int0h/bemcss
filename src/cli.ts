@@ -1,7 +1,7 @@
 import * as bemcss from './index';
-import minimist from 'minimist';
-import Comb from 'csscomb';
-import fs from 'fs-extra';
+import * as minimist from 'minimist';
+import * as Comb from 'csscomb';
+import * as fs from 'fs-extra';
 
 const opts = minimist(process.argv.slice(2));
 opts.root = opts._[0];
@@ -28,4 +28,6 @@ if (opts.c) {
 	});
 }
 
-bemcss.processFolder(opts);
+bemcss.processFolder(opts).then(() => 
+	console.log('...Done!')
+);
