@@ -2,9 +2,10 @@ import * as bemcss from './index';
 import * as minimist from 'minimist';
 import * as Comb from 'csscomb';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 
 const opts = minimist(process.argv.slice(2));
-opts.root = opts._[0];
+opts.root = path.resolve(opts._[0]);
 opts.fix = opts.f;
 const dirPath = opts.root;
 
