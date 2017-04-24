@@ -1,7 +1,7 @@
-const bemcss = require('./index');
-const minimist = require('minimist');
-const Comb = require('csscomb');
-const fs = require('fs-extra');
+import * as bemcss from './index';
+import minimist from 'minimist';
+import Comb from 'csscomb';
+import fs from 'fs-extra';
 
 const opts = minimist(process.argv.slice(2));
 opts.root = opts._[0];

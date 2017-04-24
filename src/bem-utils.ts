@@ -1,4 +1,4 @@
-function parseBem(str) {
+export function parseBem(str) {
 	const [block, elem] = str.split('__').map(part => {
 		const [owner, modName, modVal] = part.split('_');
 		let res = {
@@ -8,9 +8,10 @@ function parseBem(str) {
 			if (!modVal) {
 				throw new Error('no mod value');
 			}
-			res = Object.assign({}, res, {
+			res = {
+				...res,
 				modName, modVal
-			});
+			};
 		}
 		return res;
 	});
@@ -21,7 +22,7 @@ function parseBem(str) {
 	return block;
 }
 
-function stringifyBem(bemObj) {
+export function stringifyBem(bemObj) {
 	let res = bemObj.name;
 	if (bemObj.modName) {
 		res = [bemObj.name, bemObj.modName, bemObj.modVal].join('_');
@@ -32,7 +33,7 @@ function stringifyBem(bemObj) {
 	return res;
 }
 
-function bemPath(bemObj) {
+export function bemPath(bemObj) {
 	let folderName = '';
 	if (bemObj.elem) {
 		folderName = '__' + bemObj.elem.name + '/';
@@ -45,5 +46,3 @@ function bemPath(bemObj) {
 	}
 	return folderName + stringifyBem(bemObj) + '.css';
 }
-
-module.exports = {parseBem, stringifyBem, bemPath};

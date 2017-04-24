@@ -1,11 +1,11 @@
-const css = require('css');
-const colors = require('colors/safe');
-const fs = require('fs-extra');
-const path = require('path');
+import css from 'css';
+import colors from 'colors/safe';
+import fs from 'fs-extra';
+import * as path from 'path';
 
-const {parseBem, stringifyBem, bemPath} = require('./bem-utils');
+import {parseBem, stringifyBem, bemPath} from './bem-utils';
 
-function postProcessCss(code){
+let postProcessCss = function postProcessCss(code){
 	return new Promise((res)=>res(code));
 }
 
@@ -16,7 +16,7 @@ function err(...args){
 };
 
 function findFirstMatch(str) {
-	let res = /\.([\d\w\-\_]*)/.exec(str);
+	let res: string | string[] = /\.([\d\w\-\_]*)/.exec(str);
 	if (!res) {
 		err('first piece of selector must be a class');
 		process.exit();
@@ -55,7 +55,7 @@ function hasRule(ast, rule) {
 	return ruleList.includes(ruleSelector);
 }
 
-function addRuleToFile(root, ruleObj) {
+async function addRuleToFile(root, ruleObj) {
 	const ruleText = ruleObj.selectors.join(',');
 	const firstMatch = findFirstMatch(ruleObj.selectors[0]);
 	const bemObj = parseBem(firstMatch);
@@ -72,15 +72,13 @@ function addRuleToFile(root, ruleObj) {
 		return false;
 	}
 	ast.stylesheet.rules.push(ruleObj);
-	postProcessCss(css.stringify(ast))
-		.then(newCss => {
-			fs.writeFileSync(filePath, newCss)
-		});
+	const newCss = await postProcessCss(css.stringify(ast));
+	fs.writeFileSync(filePath, newCss);
 	console.log(colors.green(`\t... ${ruleText} is fixed!`));
 	return true;
 }
 
-function processFile(bemObj, filePath, opts) {
+async function processFile(bemObj, filePath, opts) {
 	console.log(`Processing file: ${filePath}`);
 	let badRules = [];
 	let ast = parseFile(filePath);
@@ -95,30 +93,30 @@ function processFile(bemObj, filePath, opts) {
 	if (badRules.length !== 0) {
 		console.log(colors.green(`\t... ${filePath} is fixed!`));		
 	}
-	postProcessCss(css.stringify(ast))
-		.then(newCss => {
-			fs.writeFileSync(filePath, newCss)
-		});
+	const newCss = await postProcessCss(css.stringify(ast));
+	fs.writeFileSync(filePath, newCss);
 }
 
-function processMods(modsDir, opts) {
-	fs.readdirSync(modsDir).forEach(fileName => {
+async function processMods(modsDir, opts) {
+	const fileList = fs.readdirSync(modsDir);
+	for (const fileName of fileList) {
 		const filePath = path.join(modsDir, fileName);
 		if (fs.statSync(filePath).isDirectory()) {
 			console.warn(`Directory ${fileName} in mod directory`);
 			return;
 		}
 		const bemObj = parseBem(getFileName(fileName));		
-		processFile(bemObj, filePath, opts);
-	})
+		await processFile(bemObj, filePath, opts);
+	}
 }
 
-function processElem(elemDir, parent, opts) {
-	fs.readdirSync(elemDir).forEach(fileName => {
+async function processElem(elemDir, parent, opts) {
+	const fileList = fs.readdirSync(elemDir);
+	for (const fileName of fileList) {
 		const filePath = path.join(elemDir, fileName);
 		if (fs.statSync(filePath).isDirectory()) {
 			if (/^_/.test(fileName)){
-				processMods(filePath, opts);
+				await processMods(filePath, opts);
 				return;
 			}
 			console.warn(`Directory ${fileName} in elem directory`);
@@ -128,35 +126,35 @@ function processElem(elemDir, parent, opts) {
 			return;
 		}
 		const bemObj = parseBem(getFileName(fileName));
-		processFile(bemObj, filePath, opts);
-	})
+		await processFile(bemObj, filePath, opts);
+	}
 }
 
-function processFolder(opts) {
+export async function processFolder(opts) {
 	const name = getFileName(opts.root);
 	const mainFilePath = opts.root + '/' + name + '.css';
 	const bemObj = {name};
 	if (fs.existsSync(mainFilePath)) {
-		processFile(bemObj, mainFilePath, opts);
+		await processFile(bemObj, mainFilePath, opts);
 	};
-	fs.readdirSync(opts.root).forEach(item => {
+	const fileList = fs.readdirSync(opts.root);
+	for (const item of fileList) {
 		const itemPath = path.join(opts.root, item);
 		if (fs.statSync(itemPath).isFile()) {			
 			return;
 		}
 		if (/^__/.test(item)){
-			processElem(itemPath, bemObj, opts);
+			await processElem(itemPath, bemObj, opts);
 			return;
 		}
 		if (/^_/.test(item)){
-			processMods(itemPath, opts);
+			await processMods(itemPath, opts);
 			return;
 		}
-	})
+	}
 }
 
-function setPostProcessor(fn) {
+export function setPostProcessor(fn) {
 	postProcessCss = fn;
 }
 
-module.exports = {processFolder, setPostProcessor};

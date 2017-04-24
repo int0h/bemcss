@@ -3,7 +3,7 @@
   "bin": "./bin/bemcss",
   "version": "0.0.1",
   "description": "validate and fix CSS according to BEM",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "dependencies": {
     "colors": "^1.1.2",
     "css": "^2.2.1",
